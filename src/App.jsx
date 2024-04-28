@@ -19,7 +19,7 @@ function deriveActivePlayer(gameTurns) {
     }*/
 
     let currentPlayer = 'X';
-    if ( gameTurns.length > 0 && gameTurns[0].player === 'X'){
+    if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
         currentPlayer = 'O';
     }
 
@@ -32,7 +32,7 @@ function App() {
 
     const activePlayer = deriveActivePlayer(gameTurns);
 
-    let gameBoard = initialGameBoard;
+    let gameBoard = [...initialGameBoard.map(array => [...array])];  // deep copy
 
     // console.log("turns: ", turns);
     for (const turn of gameTurns) {
@@ -54,7 +54,7 @@ function App() {
     }
 
     const hasDraw = gameTurns.length === 9 && !winner;
-    
+
     function handleSelectSquare(rowIndex, colIndex) {
         // setActivePlayer((currentlyActivePlayer) => currentlyActivePlayer === 'X' ? 'O' : 'X');
         setGameTurns(
@@ -74,19 +74,23 @@ function App() {
         );
     }
 
-  return (
-    <main>
-      <div id="game-container">
-        <ol id="players" className="highlight-player">
-          <Player initialName="Player 2" symbol="X" isActive={activePlayer === 'X'}/>
-          <Player initialName="Player 1" symbol="O" isActive={activePlayer === 'O'}/>
-        </ol>
-          {(winner || hasDraw) && <GameOver winner={winner}/>}
-          <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard}/>
-      </div>
-        <Log turns={gameTurns}/>
-    </main>
-  );
+    function handleRestart() {
+        setGameTurns([]);
+    }
+
+    return (
+        <main>
+            <div id="game-container">
+                <ol id="players" className="highlight-player">
+                    <Player initialName="Player 2" symbol="X" isActive={activePlayer === 'X'}/>
+                    <Player initialName="Player 1" symbol="O" isActive={activePlayer === 'O'}/>
+                </ol>
+                {(winner || hasDraw) && <GameOver winner={winner} onRestart={handleRestart}/>}
+                <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard}/>
+            </div>
+            <Log turns={gameTurns}/>
+        </main>
+    );
 }
 
 export default App;
